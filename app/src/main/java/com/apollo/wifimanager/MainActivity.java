@@ -1,19 +1,26 @@
 package com.apollo.wifimanager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.apollo.wifimanager.wifiutil.Manager;
+import com.apollo.wifimanager.wifiutil.RootChecker;
 import com.apollo.wifimanager.wifiutil.WifiStatus;
 
 import java.util.List;
@@ -45,16 +52,20 @@ public class MainActivity extends Activity {
         });
 
         TextView tvViewPsd = (TextView) findViewById(R.id.tv_main_view_psd);
-        tvViewPsd.setOnClickListener(new View.OnClickListener(){
+        tvViewPsd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //点击<查看密码>按钮，跳转到<连接记录>界面
-                Intent intent = new Intent(MainActivity.this, RecordActivity.class);
-                MainActivity.this.startActivity(intent);
+                clickViewPasswordButton();
             }
         });
 
         lvNearby = (ListView) findViewById(R.id.lv_main_nearby);
+        lvNearby.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemClick: "+position);
+            }
+        });
     }
 
     /**
@@ -108,10 +119,106 @@ public class MainActivity extends Activity {
         Log.i(TAG, wifiStatus.toString());
         tvCurSSID.setText(wifiStatus.getSsid());
 
-        List<WifiStatus> list = manager.getNearbyWfi();
+        final List<WifiStatus> list = manager.getNearbyWfi();
         NearbyWifiAdapter adapter = new NearbyWifiAdapter(this, list);
         lvNearby.setAdapter(adapter);
+        lvNearby.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Context context = MainActivity.this;
+                final WifiStatus wifi = list.get(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                final EditText ed = new EditText(context);
+                builder.setTitle("请输入密码")
+                        .setView(ed)
+                        .setPositiveButton("连接", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i(TAG, "wifi=" + wifi.getSsid() + ", input psd=" + ed.getText());
+                                connectWifi(wifi.getSsid(), ed.getText().toString());
+                            }
+                        });
+                builder.show();
+            }
+        });
     }
 
+    /**
+     * 点击<查看密码>按钮
+     */
+    private void clickViewPasswordButton(){
+        final Context context = MainActivity.this;
+        if(RootChecker.isRoot()){
+            //有root权限，跳转到<连接记录>界面
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("提示")
+                    .setMessage("查询WiFi密码需要授予ROOT权限")
+                    .setPositiveButton("授权", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(context, RecordActivity.class);
+                            context.startActivity(intent);
+                        }
+                    });
+            builder.show();
 
+            /*
+            View view = View.inflate(context, R.layout.dialog, null);
+            Dialog dialog = new Dialog(context, R.style.Mydialog);
+            dialog.setContentView(view);
+            dialog.show();
+            */
+        }else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("提示")
+                    .setMessage("查询WiFi密码需要授予ROOT权限，您的设备尚未ROOT")
+                    .setPositiveButton("一键ROOT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(context, "该下载了", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            builder.show();
+        }
+    }
+
+    /**
+     * 连接wifi热点
+     *
+     * @param ssid
+     * @param password
+     */
+    private void connectWifi(String ssid, String password){
+        /*
+        WiFiConnector connector = new WiFiConnector(this);
+        connector.connect(ssid, password, new WiFiConnector.ActionListener() {
+
+            @Override
+            public void onStarted(String ssid) {
+                Log.i(TAG, "onStarted");
+            }
+
+            @Override
+            public void onSuccess(WifiInfo info) {
+                Log.i(TAG, "onSuccess");
+            }
+
+            @Override
+            public void onFailure() {
+                Log.i(TAG, "onFailure");
+            }
+
+            @Override
+            public void onFinished(boolean isSuccessed) {
+                Log.i(TAG, "onFinished" + isSuccessed);
+            }
+
+        });
+        */
+
+        Manager manager = Manager.getInstance(this);
+        WifiConfiguration conf = manager.CreateWifiInfo(ssid, password, 3);
+        boolean b = manager.addWifi(conf);
+        Log.i(TAG, "connectWifi: "+ b);
+    }
 }

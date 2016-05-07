@@ -18,6 +18,7 @@ package com.apollo.wifimanager.wifiutil;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -95,6 +96,81 @@ public class Manager {
         }
         //按照信号强弱排序
         Collections.sort(listResult);
+        Collections.reverse(listResult);
         return listResult;
+    }
+
+    /**
+     * @param SSID
+     * @param Password
+     * @param Type     1没有密码;2用wep加密;3用wpa加密
+     * @return
+     */
+    public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
+        WifiConfiguration config = new WifiConfiguration();
+        config.allowedAuthAlgorithms.clear();
+        config.allowedGroupCiphers.clear();
+        config.allowedKeyManagement.clear();
+        config.allowedPairwiseCiphers.clear();
+        config.allowedProtocols.clear();
+        config.SSID = "\"" + SSID + "\"";
+
+        WifiConfiguration tempConfig = exists(SSID);
+        if (tempConfig != null) {
+            wifiManager.removeNetwork(tempConfig.networkId);
+        }
+
+        //open
+        if (Type == 1) {
+            config.wepKeys[0] = "";
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+        }
+        //WIFICIPHER_WEP
+        if (Type == 2) {
+            config.hiddenSSID = true;
+            config.wepKeys[0] = "\"" + Password + "\"";
+            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+        }
+        //WIFICIPHER_WPA
+        if (Type == 3) {
+            config.preSharedKey = "\"" + Password + "\"";
+            config.hiddenSSID = true;
+            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            //config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+            config.status = WifiConfiguration.Status.ENABLED;
+        }
+        return config;
+    }
+
+    private WifiConfiguration exists(String SSID) {
+        List<WifiConfiguration> existingConfigs = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration existingConfig : existingConfigs) {
+            if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
+                return existingConfig;
+            }
+        }
+        return null;
+    }
+
+    public boolean addWifi(WifiConfiguration newConfig) {
+
+        int netID = wifiManager.addNetwork(newConfig);//添加
+
+        boolean bRet = wifiManager.enableNetwork(netID, false);//启动
+
+        return bRet;
+
     }
 }
