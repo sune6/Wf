@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/dialog"
+                android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_dialog_connect_ssid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_alignParentTop="true"
+        />
+
+
+    <Button
+        android:id="@+id/btn_dialog_connect_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#03A9F4"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="连接"
+        android:textColor="#ffffff"
+        android:textSize="18sp"/>
+
+
+    <EditText
+        android:id="@+id/et_dialog_connect_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_selector"
+        android:layout_below="@id/tv_dialog_connect_ssid"
+        android:layout_above="@id/btn_dialog_connect_ok"
+        />
+
+
+</RelativeLayout>

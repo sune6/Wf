@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/dialog"
+                android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查询WiFi密码需要授予ROOT权限，您的设备尚未ROOT"
+        android:textSize="16sp"
+        />
+
+    <Button
+        android:id="@+id/btn_dialog_go_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#03A9F4"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="一键ROOT"
+        android:textColor="#ffffff"
+        android:textSize="18sp"/>
+
+
+</RelativeLayout>

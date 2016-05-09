@@ -17,7 +17,7 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="Mydialog" parent="@android:style/Theme.Dialog">
+    <style name="dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@color/dialog_bg</item>
         <item name="android:windowNoTitle">true</item>
     </style>
