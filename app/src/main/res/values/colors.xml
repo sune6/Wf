@@ -7,4 +7,5 @@
     <color name="top_bar_bg">#2196F3</color>
     <color name="list_item_pressed">#80D8FF</color>
     <color name="dialog_bg">#ffffff</color>
+    <color name="button_bg">#03A9F4</color>
 </resources>

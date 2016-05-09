@@ -129,22 +129,9 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Context context = MainActivity.this;
                 final WifiStatus wifi = list.get(position);
-                /*
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                final EditText ed = new EditText(context);
-                builder.setTitle("请输入密码")
-                        .setView(ed)
-                        .setPositiveButton("连接", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.i(TAG, "wifi=" + wifi.getSsid() + ", input psd=" + ed.getText());
-                                connectWifi(wifi.getSsid(), ed.getText().toString());
-                            }
-                        });
-                builder.show();
-                */
+                //自定义对话框
                 View contentView = View.inflate(context, R.layout.dialog_connect, null);
-                final Dialog dialog = DialogUtils.createDialog(context, contentView);
+                final Dialog dialog = DialogUtils.createDialog(context, contentView, 0.35f, 0.7f);
                 TextView tv = (TextView) contentView.findViewById(R.id.tv_dialog_connect_ssid);
                 tv.setText(wifi.getSsid());
                 final EditText et = (EditText) contentView.findViewById(R.id.et_dialog_connect_password);
