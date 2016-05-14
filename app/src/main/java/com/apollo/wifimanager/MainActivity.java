@@ -7,31 +7,30 @@ import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apollo.wifimanager.wifiutil.DialogUtils;
+import com.apollo.wifimanager.view.DashboardView;
+import com.apollo.wifimanager.view.DialogUtils;
 import com.apollo.wifimanager.wifiutil.Manager;
 import com.apollo.wifimanager.wifiutil.RootChecker;
+import com.apollo.wifimanager.wifiutil.WifiPsdUtil;
 import com.apollo.wifimanager.wifiutil.WifiStatus;
 
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
     private static final String TAG = "-----";
-    private ImageView ivTopBarMenu;
     private TextView tvCurSSID;
     private ListView lvNearby;
+    private DashboardView dvSignal;
+    private DashboardView dvSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +39,18 @@ public class MainActivity extends Activity {
 
         initView();
         setData();
+
     }
 
     private void initView() {
         tvCurSSID = (TextView) findViewById(R.id.tv_main_cur_ssid);
-        ivTopBarMenu = (ImageView) findViewById(R.id.iv_top_bar_menu);
+        ImageView ivTopBarMenu = (ImageView) findViewById(R.id.iv_top_bar_menu);
         ivTopBarMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //点击右上角菜单图标，显示选项菜单
-                showMenuPopWindow(MainActivity.this);
+                //点击右上角菜单图标，进入设置界面
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -62,57 +63,8 @@ public class MainActivity extends Activity {
         });
 
         lvNearby = (ListView) findViewById(R.id.lv_main_nearby);
-        lvNearby.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "onItemClick: " + position);
-            }
-        });
-    }
-
-    /**
-     * 用PopupWindow模拟右上角菜单
-     */
-    private void showMenuPopWindow(final Context context) {
-        // 一个自定义的布局，作为显示的内容
-        View contentView = LayoutInflater.from(context).inflate(R.layout.content_menu_pop_window, null);
-
-
-        final PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-//        popupWindow.setTouchable(true);
-//        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                // 这里如果返回true的话，touch事件将被拦截
-//                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
-//                return false;
-//            }
-//        });
-
-        // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.abc_switch_track_mtrl_alpha));
-        // 设置按钮的点击事件
-        TextView tvDis = (TextView) contentView.findViewById(R.id.tv_main_menu_dis);
-        tvDis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, DisclaimerActivity.class);
-                context.startActivity(intent);
-                popupWindow.dismiss();
-            }
-        });
-        TextView tvAbout = (TextView) contentView.findViewById(R.id.tv_main_menu_about);
-        tvAbout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, AboutActivity.class);
-                context.startActivity(intent);
-                popupWindow.dismiss();
-            }
-        });
-        // 设置好位置之后再show
-        popupWindow.showAsDropDown(ivTopBarMenu);
-
+        dvSignal = (DashboardView) findViewById(R.id.dv1);
+        dvSpeed = (DashboardView) findViewById(R.id.dv2);
     }
 
     private void setData() {
@@ -129,7 +81,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Context context = MainActivity.this;
                 final WifiStatus wifi = list.get(position);
-                //自定义对话框
+                //对话框-请输入密码
                 View contentView = View.inflate(context, R.layout.dialog_connect, null);
                 final Dialog dialog = DialogUtils.createDialog(context, contentView, 0.35f, 0.7f);
                 TextView tv = (TextView) contentView.findViewById(R.id.tv_dialog_connect_ssid);
@@ -147,6 +99,8 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        dvSignal.setRealTimeValue(100, true, 100);
     }
 
     /**
@@ -162,9 +116,16 @@ public class MainActivity extends Activity {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //点击<授权>按钮
                     dialog.dismiss();
-                    Intent intent = new Intent(context, RecordActivity.class);
-                    context.startActivity(intent);
+                    try {
+                        String ssid = tvCurSSID.getText().toString();
+                        String psd = WifiPsdUtil.getPassword(ssid);
+                        showPassword(ssid, psd);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             });
             dialog.show();
@@ -177,6 +138,7 @@ public class MainActivity extends Activity {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //点击<确定>按钮
                     dialog.dismiss();
                     //TODO 下载<一键ROOT>
                     Toast.makeText(MainActivity.this, "go root", Toast.LENGTH_SHORT).show();
@@ -184,6 +146,31 @@ public class MainActivity extends Activity {
             });
             dialog.show();
         }
+    }
+
+    /**
+     * 弹出对话框，显示ssid和password
+     *
+     * @param ssid ssid
+     * @param password password
+     */
+    private void showPassword(String ssid, String password){
+        Context context = this;
+        View view = View.inflate(context, R.layout.dialog_show_password, null);
+        final Dialog dialog = DialogUtils.createDialog(context, view);
+        TextView tvSsid = (TextView) view.findViewById(R.id.tv_dialog_show_pswd_ssid);
+        tvSsid.setText(ssid);
+        TextView tvPswd = (TextView) view.findViewById(R.id.tv_dialog_show_pswd_pswd);
+        tvPswd.setText("密码：" + password);
+        Button btn = (Button) view.findViewById(R.id.btn_dialog_show_password_ok);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //点击<确定>按钮
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     /**
@@ -227,4 +214,14 @@ public class MainActivity extends Activity {
 
         }
     }
+
+    /*
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    */
 }

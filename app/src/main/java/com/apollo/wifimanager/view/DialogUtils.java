@@ -1,4 +1,4 @@
-package com.apollo.wifimanager.wifiutil;
+package com.apollo.wifimanager.view;
 
 import android.app.Dialog;
 import android.content.Context;

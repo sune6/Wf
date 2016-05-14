@@ -18,6 +18,8 @@ import java.util.List;
 
 /**
  * 连接记录---显示已连接过的wifi热点，点击记录查看密码
+ *
+ * @deprecated 暂时没用
  */
 public class RecordActivity extends Activity {
 

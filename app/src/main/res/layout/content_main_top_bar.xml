@@ -3,8 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/top_bar_height"
-    android:background="@color/top_bar_bg"
-    android:paddingLeft="@dimen/top_bar_padding_left">
+    android:background="@color/colorPrimary"
+    android:paddingLeft="@dimen/top_bar_padding_left"
+    android:paddingRight="10dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,11 +18,10 @@
 
     <ImageView
         android:id="@+id/iv_top_bar_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerInside"
-        android:src="@drawable/top_bar_menu" />
+        android:src="@drawable/setting" />
 
 </RelativeLayout>

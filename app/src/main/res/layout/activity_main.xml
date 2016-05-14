@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,78 +11,107 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
 
-        <ImageView
+        <TextView
+            android:id="@+id/tv_main_cur_ssid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:src="@drawable/ic_wifi_open_signal_4" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            tools:text="TPLink_123" />
+
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_main_cur_ssid"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_vertical"
-                android:textColor="#03A9F4"
-                android:textSize="20sp" />
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/tv_main_view_psd"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:clickable="true"
-                android:background="@drawable/textview_border"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textSize="16sp"
-                android:text="查看密码" />
+                <com.apollo.wifimanager.view.DashboardView
+                    android:id="@+id/dv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    app:bigSliceCount="5"
+                    app:circleRadius="3dp"
+                    app:maxValue="100"
+                    app:measureTextSize="10sp"
+                    app:radius="50dp"
+                    app:startAngle="150"
+                    app:sweepAngle="240" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <com.apollo.wifimanager.view.DashboardView
+                    android:id="@+id/dv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    app:bigSliceCount="5"
+                    app:circleRadius="3dp"
+                    app:maxValue="10"
+                    app:measureTextSize="10sp"
+                    app:radius="50dp"
+                    app:sliceCountInOneBigSlice="2"
+                    app:startAngle="150"
+                    app:sweepAngle="240" />
+            </RelativeLayout>
+
+
         </LinearLayout>
+
+        <Button
+            android:id="@+id/tv_main_view_psd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/button_round"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="  一键查看密码  "
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
-    <RelativeLayout
+
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="#E0E0E0"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center_vertical"
+        android:text="附近的Wifi"
+        android:textColor="#9E9E9E"
+        android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="附近的Wifi"
-            android:textColor="#9E9E9E"
-            android:textSize="16sp" />
-
-        <ImageView
-            android:id="@+id/iv_main_refresh"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_refresh" />
-    </RelativeLayout>
 
     <ListView
         android:id="@+id/lv_main_nearby"
+        layout="@layout/list_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:listSelector="@drawable/list_item_selector"
-        layout="@layout/list_item"/>
+        android:listSelector="@drawable/list_item_selector" />
 
 
 </LinearLayout>

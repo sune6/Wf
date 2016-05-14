@@ -1,5 +1,7 @@
 package com.apollo.wifimanager.wifiutil;
 
+import android.text.TextUtils;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -77,6 +79,79 @@ public class WifiPsdUtil {
         }
 
         return wifiList;
+    }
+
+    public static String getPassword(String ssid) {
+        String failed = "获取失败";
+
+        if(TextUtils.isEmpty(ssid)){
+            return failed;
+        }
+
+        Process process = null;
+        DataOutputStream dataOutputStream = null;
+        DataInputStream dataInputStream = null;
+        StringBuffer wifiConf = new StringBuffer();
+        try {
+            process = Runtime.getRuntime().exec("su");
+            dataOutputStream = new DataOutputStream(process.getOutputStream());
+            dataInputStream = new DataInputStream(process.getInputStream());
+            dataOutputStream
+                    .writeBytes("cat /data/misc/wifi/*.conf\n");
+            dataOutputStream.writeBytes("exit\n");
+            dataOutputStream.flush();
+            InputStreamReader inputStreamReader = new InputStreamReader(
+                    dataInputStream, "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(
+                    inputStreamReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                wifiConf.append(line);
+            }
+            bufferedReader.close();
+            inputStreamReader.close();
+            process.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (dataOutputStream != null) {
+                    dataOutputStream.close();
+                }
+                if (dataInputStream != null) {
+                    dataInputStream.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Pattern network = Pattern.compile("network=\\{([^\\}]+)\\}", Pattern.DOTALL);
+        Matcher networkMatcher = network.matcher(wifiConf.toString());
+        String password;
+        while (networkMatcher.find()) {
+            String networkBlock = networkMatcher.group();
+            Pattern ssidPattern = Pattern.compile("ssid=\"([^\"]+)\"");
+            Matcher ssidMatcher = ssidPattern.matcher(networkBlock);
+
+            if (ssidMatcher.find()) {
+                String id = ssidMatcher.group(1);
+                Pattern psk = Pattern.compile("psk=\"([^\"]+)\"");
+                Matcher pskMatcher = psk.matcher(networkBlock);
+                if(ssid.equals(id)){
+                    if (pskMatcher.find()) {
+                        password = pskMatcher.group(1);
+                    } else {
+                        password = "无密码";
+                    }
+                    return password;
+                }
+            }
+
+        }
+
+        return failed;
     }
 
 }

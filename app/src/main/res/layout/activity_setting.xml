@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/content_other_top_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+
+        <TextView
+            android:id="@+id/tv_setting_comment"
+            style="@style/setting_text_view"
+            android:drawableLeft="@drawable/setting_comment"
+            android:text="好评点赞"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divide_line" />
+
+
+        <TextView
+            android:id="@+id/tv_setting_check_update"
+            style="@style/setting_text_view"
+            android:drawableLeft="@drawable/setting_check_update"
+            android:text="检查更新"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divide_line" />
+
+
+        <TextView
+            android:id="@+id/tv_setting_about"
+            style="@style/setting_text_view"
+            android:drawableLeft="@drawable/setting_about"
+            android:text="@string/title_activity_about"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divide_line" />
+
+
+        <TextView
+            android:id="@+id/tv_setting_disclaimer"
+            style="@style/setting_text_view"
+            android:drawableLeft="@drawable/setting_disclaimer"
+            android:text="@string/title_activity_disclaimer" />
+
+    </LinearLayout>
+
+</LinearLayout>
