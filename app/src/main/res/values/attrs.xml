@@ -24,5 +24,6 @@
             <enum name="outer" value="2"/>
         </attr>
         <attr name="bgColor" format="color"/> <!--背景颜色-->
+        <attr name="text" format="string"/> <!--实时值的位置显示的固定文字-->
     </declare-styleable>
 </resources>

@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private ListView lvNearby;
     private DashboardView dvSignal;
     private DashboardView dvSpeed;
+    private boolean isRegister;
     private WifiStatus wifiConnected = new WifiStatus(); //当前连接的wifi信息
 
     @Override
@@ -43,9 +44,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        registerWifiReceiver();
         initView();
         setData();
+//        registerWifiReceiver();
     }
 
     private void registerWifiReceiver(){
@@ -53,6 +54,7 @@ public class MainActivity extends Activity {
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         registerReceiver(wifiReceiver, filter);
+        isRegister = true;
     }
 
 
@@ -137,6 +139,7 @@ public class MainActivity extends Activity {
         tvCurSSID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                registerWifiReceiver();
                 Manager.getInstance(MainActivity.this).setEnable();
             }
         });
@@ -159,7 +162,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 已连接热点
+     * 连接热点成功
      */
     private void setStatusConnected(){
         wifiConnected = Manager.getInstance(this).getCurrentWifiStatus();
@@ -167,8 +170,9 @@ public class MainActivity extends Activity {
         //连接成功后，显示wifi热点名称，并设为不可点击
         tvCurSSID.setClickable(false);
 
-        Log.i(TAG, "signal level: "+wifiConnected.getLevel());
-        dvSignal.setRealTimeValue(100, true, 100);
+        int signal = wifiConnected.getLevel();
+        Log.i(TAG, "speed: "+wifiConnected.getSpeed());
+        dvSignal.setRealTimeValue(signal, true, 150);
     }
 
     /**
@@ -293,7 +297,6 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i(TAG, "action: "+action);
             //是否连上无线路由器
             if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
                 int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
@@ -323,7 +326,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(wifiReceiver);
+        if(isRegister){
+            unregisterReceiver(wifiReceiver);
+        }
     }
 
 }

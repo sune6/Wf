@@ -19,6 +19,7 @@ import com.apollo.wifimanager.R;
 import java.util.List;
 
 public class DashboardView extends View {
+    private static final String TAG = "DashboardView----";
 
     private int mRadius; // 圆弧半径
     private int mStartAngle; // 起始角度
@@ -44,6 +45,7 @@ public class DashboardView extends View {
     private int mModeType;
     private List<HighlightCR> mStripeHighlight; // 高亮范围颜色对象的集合
     private int mBgColor; // 背景色
+    private String mText = "";
 
     private int mViewWidth; // 控件宽度
     private int mViewHeight; // 控件高度
@@ -107,6 +109,8 @@ public class DashboardView extends View {
         mStripeWidth = a.getDimensionPixelSize(R.styleable.DashboardView_stripeWidth, 0);
         mModeType = a.getInt(R.styleable.DashboardView_stripeMode, 0);
         mBgColor = a.getColor(R.styleable.DashboardView_bgColor, 0);
+        mText = a.getString(R.styleable.DashboardView_text);
+        if(mText == null) mText = "";
 
         a.recycle();
 
@@ -441,8 +445,8 @@ public class DashboardView extends View {
         canvas.drawCircle(mCenterX, mCenterY, mCircleRadius + dpToPx(2), mPaintPointer);
 
         // 绘制读数
-        canvas.drawText(trimFloat(mRealTimeValue), mCenterX,
-                mCenterY + mCircleRadius + dpToPx(2) + dpToPx(25), mPaintValue);
+//        canvas.drawText(trimFloat(mRealTimeValue), mCenterX, mCenterY + mCircleRadius + dpToPx(2) + dpToPx(25), mPaintValue);
+        canvas.drawText(mText, mCenterX, mViewHeight - dpToPx(2), mPaintValue);
     }
 
     /**
@@ -678,6 +682,13 @@ public class DashboardView extends View {
         return mRealTimeValue;
     }
 
+    /**
+     * 不显示实时值，显示固定文字
+     */
+    public void setText(String text){
+        this.mText = text;
+    }
+
     public void setRealTimeValue(float realTimeValue) {
         mRealTimeValue = realTimeValue;
         initSizes();
@@ -827,9 +838,9 @@ public class DashboardView extends View {
             super.handleMessage(msg);
             if (msg.what == 0) {
                 if (preValue > endValue) {
-                    preValue -= 1;
+                    preValue -= 0.1;
                 } else if (preValue < endValue) {
-                    preValue += 1;
+                    preValue += 0.1;
                 }
                 if (Math.abs(preValue - endValue) > 1) {
                     mRealTimeValue = preValue;

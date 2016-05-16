@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Manager {
     private static final String TAG = "-----";
-    private static final int SIGNAL_MAX = 100;
+    private static final int SIGNAL_MAX = 5;
     private static Manager manager;
     private WifiManager wifiManager;
     private Context context;
