@@ -29,6 +29,7 @@ import java.util.List;
 
 public class Manager {
     private static final String TAG = "-----";
+    private static final int SIGNAL_MAX = 100;
     private static Manager manager;
     private WifiManager wifiManager;
     private Context context;
@@ -55,13 +56,20 @@ public class Manager {
     }
 
     /**
+     * 开启wifi
+     */
+    public void setEnable(){
+        wifiManager.setWifiEnabled(true);
+    }
+
+    /**
      * 获得当前连接的wifi信息
      */
     public WifiStatus getCurrentWifiStatus() {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         String ssid = wifiInfo.getSSID().replace("\"", "");
         String speed = wifiInfo.getLinkSpeed() + WifiInfo.LINK_SPEED_UNITS;
-        int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 5);
+        int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), SIGNAL_MAX + 1);
 
         WifiStatus wifiStatus = new WifiStatus();
         wifiStatus.setSsid(ssid);

@@ -1,12 +1,14 @@
 package com.apollo.wifimanager.wifiutil;
 
 /**
- * Created by Sun on 2016-04-30.
+ * Created by Sun
+ *
+ * 2016-04-30
  */
 public class WifiStatus implements Comparable {
-    private String ssid;
-    private String speed;
-    private String capabilities;
+    private String ssid = "";
+    private String speed = "";
+    private String capabilities = "";
     private int level;
 
     public String getCapabilities() {

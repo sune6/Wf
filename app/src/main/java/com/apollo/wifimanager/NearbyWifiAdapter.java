@@ -13,7 +13,10 @@ import com.apollo.wifimanager.wifiutil.WifiStatus;
 import java.util.List;
 
 /**
- * Created by Sun on 2016-05-02.
+ * Created by Sun
+ *
+ * 2016-05-02
+ *
  */
 public class NearbyWifiAdapter extends BaseAdapter {
     private Context context;

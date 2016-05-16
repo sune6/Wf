@@ -2,9 +2,13 @@ package com.apollo.wifimanager;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +23,7 @@ import android.widget.Toast;
 import com.apollo.wifimanager.view.DashboardView;
 import com.apollo.wifimanager.view.DialogUtils;
 import com.apollo.wifimanager.wifiutil.Manager;
+import com.apollo.wifimanager.wifiutil.NetworkUtil;
 import com.apollo.wifimanager.wifiutil.RootChecker;
 import com.apollo.wifimanager.wifiutil.WifiPsdUtil;
 import com.apollo.wifimanager.wifiutil.WifiStatus;
@@ -31,16 +36,25 @@ public class MainActivity extends Activity {
     private ListView lvNearby;
     private DashboardView dvSignal;
     private DashboardView dvSpeed;
+    private WifiStatus wifiConnected = new WifiStatus(); //当前连接的wifi信息
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        registerWifiReceiver();
         initView();
         setData();
-
     }
+
+    private void registerWifiReceiver(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(wifiReceiver, filter);
+    }
+
 
     private void initView() {
         tvCurSSID = (TextView) findViewById(R.id.tv_main_cur_ssid);
@@ -68,10 +82,21 @@ public class MainActivity extends Activity {
     }
 
     private void setData() {
-        Manager manager = Manager.getInstance(this);
-        WifiStatus wifiStatus = manager.getCurrentWifiStatus();
-        Log.i(TAG, wifiStatus.toString());
-        tvCurSSID.setText(wifiStatus.getSsid());
+        final Manager manager = Manager.getInstance(this);
+        if(manager.isEnabled()){
+            //wifi已开
+            Log.i(TAG, "NetworkUtil.isOnline: " + NetworkUtil.isOnline(this));
+            if(NetworkUtil.isOnline(this)){
+                //已连接到热点
+                setStatusConnected();
+            }else{
+                //未连接到热点
+                setStatusNotConnected();
+            }
+        }else{
+            //wifi关闭
+            setStatusOpenWifi();
+        }
 
         final List<WifiStatus> list = manager.getNearbyWfi();
         NearbyWifiAdapter adapter = new NearbyWifiAdapter(this, list);
@@ -100,6 +125,49 @@ public class MainActivity extends Activity {
             }
         });
 
+    }
+
+    /**
+     * 未开启WiFi
+     */
+    private void setStatusOpenWifi(){
+        tvCurSSID.setText("点击开启WiFi");
+        //只有在进入应用后，wifi状态为关闭时，才可以点击
+        tvCurSSID.setClickable(true);
+        tvCurSSID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Manager.getInstance(MainActivity.this).setEnable();
+            }
+        });
+    }
+
+    /**
+     * 未连接热点
+     */
+    private void setStatusNotConnected(){
+        tvCurSSID.setText("未连接热点");
+        tvCurSSID.setClickable(false);
+    }
+
+    /**
+     * 连接中...
+     */
+    private void setStatusIsConnecting(){
+        tvCurSSID.setText("连接中...");
+        tvCurSSID.setClickable(false);
+    }
+
+    /**
+     * 已连接热点
+     */
+    private void setStatusConnected(){
+        wifiConnected = Manager.getInstance(this).getCurrentWifiStatus();
+        tvCurSSID.setText(wifiConnected.getSsid());
+        //连接成功后，显示wifi热点名称，并设为不可点击
+        tvCurSSID.setClickable(false);
+
+        Log.i(TAG, "signal level: "+wifiConnected.getLevel());
         dvSignal.setRealTimeValue(100, true, 100);
     }
 
@@ -118,14 +186,10 @@ public class MainActivity extends Activity {
                 public void onClick(View view) {
                     //点击<授权>按钮
                     dialog.dismiss();
-                    try {
-                        String ssid = tvCurSSID.getText().toString();
-                        String psd = WifiPsdUtil.getPassword(ssid);
-                        showPassword(ssid, psd);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
+                    String ssid = wifiConnected.getSsid();
+                    String psd = WifiPsdUtil.getPassword(ssid);
+                    showPassword(ssid, psd);
                 }
             });
             dialog.show();
@@ -224,4 +288,42 @@ public class MainActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
     */
+
+    private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.i(TAG, "action: "+action);
+            //是否连上无线路由器
+            if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+                int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
+                switch (wifiState) {
+                    case WifiManager.WIFI_STATE_ENABLED:
+                    case WifiManager.WIFI_STATE_ENABLING:
+                        setStatusIsConnecting();
+                        break;
+                }
+            }
+            //是否连上无线路由器的某个热点
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
+                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if(info != null && info.isConnected()) {
+                    //联网成功
+                    setStatusConnected();
+                }else {
+                    //未连接到热点
+                    setStatusNotConnected();
+                }
+            }
+
+        }
+    };
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(wifiReceiver);
+    }
+
 }
