@@ -842,7 +842,7 @@ public class DashboardView extends View {
                 } else if (preValue < endValue) {
                     preValue += 0.1;
                 }
-                if (Math.abs(preValue - endValue) > 1) {
+                if (Math.abs(preValue - endValue) > 0.1) {
                     mRealTimeValue = preValue;
                     long t = (long) (duration / deltaValue);
                     sendEmptyMessageDelayed(0, t);

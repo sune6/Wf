@@ -24,6 +24,7 @@ import com.apollo.wifimanager.view.DashboardView;
 import com.apollo.wifimanager.view.DialogUtils;
 import com.apollo.wifimanager.wifiutil.Manager;
 import com.apollo.wifimanager.wifiutil.NetworkUtil;
+import com.apollo.wifimanager.wifiutil.RandomUtil;
 import com.apollo.wifimanager.wifiutil.RootChecker;
 import com.apollo.wifimanager.wifiutil.WifiPsdUtil;
 import com.apollo.wifimanager.wifiutil.WifiStatus;
@@ -171,8 +172,14 @@ public class MainActivity extends Activity {
         tvCurSSID.setClickable(false);
 
         int signal = wifiConnected.getLevel();
-        Log.i(TAG, "speed: "+wifiConnected.getSpeed());
         dvSignal.setRealTimeValue(signal, true, 150);
+
+        try {
+            float ran1 = RandomUtil.nextFloat(0.4f, 1.2f);
+            dvSpeed.setRealTimeValue(ran1, true, 100);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -312,10 +319,10 @@ public class MainActivity extends Activity {
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if(info != null && info.isConnected()) {
                     //联网成功
-                    setStatusConnected();
+//                    setStatusConnected();
                 }else {
                     //未连接到热点
-                    setStatusNotConnected();
+//                    setStatusNotConnected();
                 }
             }
 
