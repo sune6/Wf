@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dialog_shape"
     android:padding="20dp">
 
     <TextView
-        android:id="@+id/tv_dialog_show_pswd_ssid"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_dialog_connect_ssid"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        tools:text="TPLink-123"
-        android:textSize="20sp" />
+        android:gravity="center"
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tv_dialog_show_pswd_pswd"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_dialog_show_pswd_ssid"
-        android:layout_centerHorizontal="true"
-        tools:text="123456789"
-        android:textSize="16sp" />
+        android:layout_centerInParent="true"
+        android:text="开放WiFi"/>
 
     <Button
-        android:id="@+id/btn_dialog_show_password_ok"
+        android:id="@+id/btn_dialog_connect_ok"
         style="@style/dialog_button_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="确定"/>
+        android:text="连接"/>
 
 
 </RelativeLayout>

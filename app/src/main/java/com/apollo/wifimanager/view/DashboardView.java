@@ -19,7 +19,6 @@ import com.apollo.wifimanager.R;
 import java.util.List;
 
 public class DashboardView extends View {
-    private static final String TAG = "DashboardView----";
 
     private int mRadius; // 圆弧半径
     private int mStartAngle; // 起始角度

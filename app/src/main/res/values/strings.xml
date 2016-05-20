@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Wifi钥匙密码管家</string>
+    <string name="app_name">WiFi钥匙密码管家</string>
     <string name="title_activity_setting">设置</string>
     <string name="title_activity_about">关于我们</string>
     <string name="title_activity_disclaimer">免责声明</string>
     <string name="title_activity_record">连接记录</string>
-    <string name="about_content">\n\u3000\u3000Wifi钥匙密码管家 主要用于查看当前设备曾经连接过的所有WIFI名称和密码，并非破解WiFi密码。
-适合于使用笔记本电脑，苹果手机，ipad平板电脑等设备时忘记wifi密码，请点击一键查看密码。在使用WiFi万能钥匙，WiFi管家，WiFi共享精灵等联网神器时，轻松查看当前密码。
+    <string name="about_content">\n\u3000\u3000WiFi钥匙密码管家 主要用于查看当前设备曾经连接过的所有WiFi名称和密码，并非破解WiFi密码。
+适合于使用笔记本电脑，苹果手机，ipad平板电脑等设备时忘记WiFi密码，请点击一键查看密码。在使用WiFi万能钥匙，WiFi管家，WiFi共享精灵等联网神器时，轻松查看当前密码。
         \n\u3000\u3000本软件属个人兴趣开发，安全、免费、绿色。你的点赞好评，是我不断努力的动力，希望我的努力能给你的工作生活带来便捷！欢迎有疑问进QQ群：550798249</string>
     <string name="disclaimer_content">\n\u3000\u3000本软件纯属个人兴趣开发，保证安全，免费，绿色。主要目的为大家带来查询WiFi密码的便利。
 \n\u3000\u3000但是由于本软件查询密码需要Root成功之后才能正常使用，我们不是Root产品的开发者，只是一个搬运工，故Root过程中与Root后所产生的任何问题与开发者无关。如有疑问欢迎进QQ群：550798249</string>

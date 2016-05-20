@@ -2,12 +2,11 @@ package com.apollo.wifimanager.wifiutil;
 
 /**
  * Created by Sun
- *
+ * <p/>
  * 2016-04-30
  */
 public class WifiStatus implements Comparable {
     private String ssid = "";
-    private String speed = "";
     private String capabilities = "";
     private int level;
 
@@ -35,31 +34,23 @@ public class WifiStatus implements Comparable {
         this.level = level;
     }
 
-    public String getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(String speed) {
-        this.speed = speed;
-    }
-
     @Override
     public String toString() {
         return "WifiStatus{" +
-                "ssid='" + ssid + '\'' +
-                ", speed='" + speed + '\'' +
+                "ssid=" + ssid +
                 ", level=" + level +
+                ", capabilities=" + capabilities +
                 '}';
     }
 
     @Override
     public int compareTo(Object obj) {
-        WifiStatus another = (WifiStatus)obj;
-        if(this.level > another.level){
+        WifiStatus another = (WifiStatus) obj;
+        if (this.level > another.level) {
             return 1;
-        }else if(this.level < another.level){
+        } else if (this.level < another.level) {
             return -1;
-        }else{
+        } else {
             //this.level == another.level
             return 0;
         }

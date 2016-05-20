@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/dialog"
+                android:background="@drawable/dialog_shape"
                 android:padding="20dp">
 
     <TextView
@@ -14,16 +14,12 @@
 
     <Button
         android:id="@+id/btn_dialog_go_root"
-        android:layout_width="match_parent"
+        style="@style/dialog_button_ok"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="#03A9F4"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="一键ROOT"
-        android:textColor="#ffffff"
-        android:textSize="18sp"/>
+        android:text="下载一键ROOT"/>
 
 
 </RelativeLayout>

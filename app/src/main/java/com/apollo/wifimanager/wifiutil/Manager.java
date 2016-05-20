@@ -21,6 +21,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -29,13 +30,11 @@ import java.util.List;
 
 public class Manager {
     private static final String TAG = "-----";
-    private static final int SIGNAL_MAX = 5;
+    private static final int SIGNAL_MAX = 4;
     private static Manager manager;
     private WifiManager wifiManager;
-    private Context context;
 
     private Manager(Context context) {
-        this.context = context;
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
@@ -58,7 +57,7 @@ public class Manager {
     /**
      * 开启wifi
      */
-    public void setEnable(){
+    public void setEnable() {
         wifiManager.setWifiEnabled(true);
     }
 
@@ -68,13 +67,11 @@ public class Manager {
     public WifiStatus getCurrentWifiStatus() {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         String ssid = wifiInfo.getSSID().replace("\"", "");
-        String speed = wifiInfo.getLinkSpeed() + WifiInfo.LINK_SPEED_UNITS;
         int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), SIGNAL_MAX + 1);
 
         WifiStatus wifiStatus = new WifiStatus();
         wifiStatus.setSsid(ssid);
         wifiStatus.setLevel(level);
-        wifiStatus.setSpeed(speed);
 
         return wifiStatus;
     }
@@ -89,7 +86,7 @@ public class Manager {
             List<ScanResult> list = wifiManager.getScanResults();
             if (list.size() > 0) {
                 for (ScanResult item : list) {
-                    int level = WifiManager.calculateSignalLevel(item.level, 5);
+                    int level = WifiManager.calculateSignalLevel(item.level, SIGNAL_MAX + 1);
                     WifiStatus wifi = new WifiStatus();
                     wifi.setSsid(item.SSID);
                     wifi.setLevel(level);
@@ -109,10 +106,29 @@ public class Manager {
     }
 
     /**
-     * @param SSID
-     * @param Password
+     * 获取加密方式
+     *
+     * @param capabilities ScanResult.capabilities
+     * @return wpa, wep, open
+     */
+    public static String getEncryptionType(String capabilities) {
+        if (!TextUtils.isEmpty(capabilities)) {
+            if (capabilities.contains("WPA") || capabilities.contains("wpa")) {
+                return "wpa";
+            } else if (capabilities.contains("WEP") || capabilities.contains("wep")) {
+                return "wep";
+            }
+        }
+
+        return "open";
+    }
+
+    /**
+     * 创建WifiConfiguration
+     * @param SSID ssid
+     * @param Password 密码
      * @param Type     1没有密码;2用wep加密;3用wpa加密
-     * @return
+     * @return WifiConfiguration
      */
     public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
         WifiConfiguration config = new WifiConfiguration();
@@ -173,12 +189,8 @@ public class Manager {
     }
 
     public boolean addWifi(WifiConfiguration newConfig) {
-
         int netID = wifiManager.addNetwork(newConfig);//添加
-
-        boolean bRet = wifiManager.enableNetwork(netID, false);//启动
-
-        return bRet;
+        return wifiManager.enableNetwork(netID, false);
 
     }
 }

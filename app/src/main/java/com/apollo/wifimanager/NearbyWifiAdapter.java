@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.apollo.wifimanager.wifiutil.Manager;
 import com.apollo.wifimanager.wifiutil.WifiStatus;
 
 import java.util.List;
@@ -25,6 +26,13 @@ public class NearbyWifiAdapter extends BaseAdapter {
     public NearbyWifiAdapter(Context context, List<WifiStatus> list) {
         this.context = context;
         this.list = list;
+
+//        for(WifiStatus wifi : list){
+//            Log.i("-----wifi", "====================================");
+//            Log.i("-----wifi", wifi.getSsid());
+//            Log.i("-----wifi", "" + wifi.getLevel());
+//            Log.i("-----wifi", wifi.getCapabilities());
+//        }
     }
 
     @Override
@@ -44,7 +52,7 @@ public class NearbyWifiAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_item, null);
             holder = new ViewHolder();
@@ -56,10 +64,39 @@ public class NearbyWifiAdapter extends BaseAdapter {
         }
 
         WifiStatus wifi = list.get(position);
-        //TODO 需要根据情况显示不同的图标
-        holder.icon.setImageResource(R.drawable.ic_wifi_lock_signal_4);
-        holder.name.setText(wifi.getSsid());
+        String encryptionType = Manager.getEncryptionType(wifi.getCapabilities());
+        //根据加密方式和信号强度显示不同的图标
+        if(encryptionType.equals("open")){
+            switch (wifi.getLevel()){
+                case 0:
+                case 1:
+                    holder.icon.setImageResource(R.drawable.wifi_open_1);
+                    break;
+                case 2:
+                case 3:
+                    holder.icon.setImageResource(R.drawable.wifi_open_2);
+                    break;
+                case 4:
+                    holder.icon.setImageResource(R.drawable.wifi_open_3);
+                    break;
+            }
+        }else{
+            switch (wifi.getLevel()){
+                case 0:
+                case 1:
+                    holder.icon.setImageResource(R.drawable.wifi_lock_1);
+                    break;
+                case 2:
+                case 3:
+                    holder.icon.setImageResource(R.drawable.wifi_lock_2);
+                    break;
+                case 4:
+                    holder.icon.setImageResource(R.drawable.wifi_lock_3);
+                    break;
+            }
+        }
 
+        holder.name.setText(wifi.getSsid());
         return convertView;
     }
 
