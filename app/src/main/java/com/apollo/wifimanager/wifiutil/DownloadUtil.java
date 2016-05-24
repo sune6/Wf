@@ -10,11 +10,10 @@ import android.net.Uri;
  * 2016/5/20 16:22
  */
 public class DownloadUtil {
-    private static final String apkUrl = "http://king.myapp.com/myapp/kdown/img/NewKingrootV4.92_C143_B263_office_release_2016_05_09_105003_1.apk";
 
-    public static void downloadRootApk(Context context) {
+    public static void downloadRootApk(Context context, String url) {
         DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(apkUrl));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setMimeType("application/vnd.android.package-archive");
         request.setDestinationInExternalPublicDir("WiFiManager", "root.apk");

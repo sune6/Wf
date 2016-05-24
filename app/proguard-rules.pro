@@ -15,3 +15,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+#友盟
+-keep class com.umeng.**{*;}
+
+#友盟要求
+-keepclassmembers class * {
+        public (org.json.JSONObject);
+}

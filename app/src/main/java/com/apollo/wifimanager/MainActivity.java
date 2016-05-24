@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,11 +30,14 @@ import com.apollo.wifimanager.wifiutil.RandomUtil;
 import com.apollo.wifimanager.wifiutil.RootChecker;
 import com.apollo.wifimanager.wifiutil.WifiPsdUtil;
 import com.apollo.wifimanager.wifiutil.WifiStatus;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.onlineconfig.OnlineConfigAgent;
 
 import java.util.List;
 
 public class MainActivity extends Activity {
     private static final String TAG = "-----";
+    private static final String apkUrl = "http://king.myapp.com/myapp/kdown/img/NewKingrootV4.92_C143_B263_office_release_2016_05_09_105003_1.apk" ;
     private TextView tvCurSSID;
     private TextView tvViewPsd;
     private ListView lvNearby;
@@ -49,6 +53,15 @@ public class MainActivity extends Activity {
         initView();
         setData();
         registerWifiReceiver();
+        initUmeng();
+    }
+
+    private void initUmeng(){
+        //友盟统计
+        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
+        //请求在线参数后，在线参数被缓存到本地
+        OnlineConfigAgent.getInstance().setDebugMode(true);
+        OnlineConfigAgent.getInstance().updateOnlineConfig(this);
     }
 
     private void registerWifiReceiver() {
@@ -255,7 +268,12 @@ public class MainActivity extends Activity {
                 public void onClick(View view) {
                     //点击<确定>按钮
                     dialog.dismiss();
-                    DownloadUtil.downloadRootApk(context);
+                    //用友盟在线参数工具获取已缓存到本地的数据
+                    String url = OnlineConfigAgent.getInstance().getConfigParams(context, "root_apk_url");
+                    if(TextUtils.isEmpty(url)){
+                       url = apkUrl;
+                    }
+                    DownloadUtil.downloadRootApk(context, url);
                 }
             });
             dialog.show();
@@ -326,6 +344,17 @@ public class MainActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
 
     @Override
     protected void onDestroy() {

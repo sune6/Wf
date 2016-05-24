@@ -11,9 +11,28 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    //多渠道打包设置
+    productFlavors {
+        official {
+        }
+        productFlavors.all { flavor ->
+            flavor.manifestPlaceholders = [CHANNEL_NAME: name]
+        }
+    }
+
+    //修改生成的apk包名
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                    "flashlight-${variant.buildType.name}-${variant.productFlavors[0].name}.apk".toLowerCase())
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -24,4 +43,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
+    compile 'com.umeng.analytics:analytics:latest.integration'
 }
