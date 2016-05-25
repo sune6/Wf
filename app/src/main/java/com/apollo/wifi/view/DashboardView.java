@@ -1,4 +1,4 @@
-package com.apollo.wifimanager.view;
+package com.apollo.wifi.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,7 +14,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.apollo.wifimanager.R;
+import com.apollo.wifi.R;
 
 import java.util.List;
 

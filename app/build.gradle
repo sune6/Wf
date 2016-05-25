@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.apollo.wifimanager"
+        applicationId "com.apollo.wifi"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1

@@ -1,4 +1,4 @@
-package com.apollo.wifimanager;
+package com.apollo.wifi;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;

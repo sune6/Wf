@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <com.apollo.wifimanager.view.DashboardView
+                <com.apollo.wifi.view.DashboardView
                     android:id="@+id/dv1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <com.apollo.wifimanager.view.DashboardView
+                <com.apollo.wifi.view.DashboardView
                     android:id="@+id/dv2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

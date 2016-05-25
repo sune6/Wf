@@ -1,4 +1,4 @@
-package com.apollo.wifimanager.wifiutil;
+package com.apollo.wifi.wifiutil;
 
 import android.app.DownloadManager;
 import android.content.Context;

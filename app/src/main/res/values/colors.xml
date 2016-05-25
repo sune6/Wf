@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#39BCD0</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
 
     <color name="divide_line">#E0E0E0</color>
     <color name="top_bar_bg">#2196F3</color>
     <color name="list_item_pressed">#80D8FF</color>
     <color name="dialog_bg">#ffffff</color>
-    <color name="button_bg">#03A9F4</color>
 </resources>

@@ -1,4 +1,4 @@
-package com.apollo.wifimanager;
+package com.apollo.wifi;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.apollo.wifimanager.wifiutil.WifiBaseInfo;
-import com.apollo.wifimanager.wifiutil.WifiPsdUtil;
+import com.apollo.wifi.wifiutil.WifiBaseInfo;
+import com.apollo.wifi.wifiutil.WifiPsdUtil;
 
 import java.util.List;
 

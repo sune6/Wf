@@ -1,4 +1,4 @@
-package com.apollo.wifimanager.view;
+package com.apollo.wifi.view;
 
 /**
  * HighlightColorAndRange

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.apollo.wifimanager.wifiutil;
+package com.apollo.wifi.wifiutil;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;

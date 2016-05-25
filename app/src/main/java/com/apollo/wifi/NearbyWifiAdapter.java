@@ -1,4 +1,4 @@
-package com.apollo.wifimanager;
+package com.apollo.wifi;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,8 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.apollo.wifimanager.wifiutil.Manager;
-import com.apollo.wifimanager.wifiutil.WifiStatus;
+import com.apollo.wifi.wifiutil.Manager;
+import com.apollo.wifi.wifiutil.WifiStatus;
 
 import java.util.List;
 

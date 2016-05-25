@@ -1,4 +1,4 @@
-package com.apollo.wifimanager;
+package com.apollo.wifi;
 
 import android.app.Activity;
 import android.os.Bundle;

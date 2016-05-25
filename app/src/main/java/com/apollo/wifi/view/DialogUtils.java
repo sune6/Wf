@@ -1,4 +1,4 @@
-package com.apollo.wifimanager.view;
+package com.apollo.wifi.view;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.apollo.wifimanager.R;
+import com.apollo.wifi.R;
 
 /**
  * Created by Sun on 2016/5/9.

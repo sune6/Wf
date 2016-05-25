@@ -1,4 +1,4 @@
-package com.apollo.wifimanager.wifiutil;
+package com.apollo.wifi.wifiutil;
 
 public class WifiBaseInfo {
     public String Ssid="";

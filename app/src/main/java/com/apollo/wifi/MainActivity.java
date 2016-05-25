@@ -1,4 +1,4 @@
-package com.apollo.wifimanager;
+package com.apollo.wifi;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,15 +21,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apollo.wifimanager.view.DashboardView;
-import com.apollo.wifimanager.view.DialogUtils;
-import com.apollo.wifimanager.wifiutil.DownloadUtil;
-import com.apollo.wifimanager.wifiutil.Manager;
-import com.apollo.wifimanager.wifiutil.NetworkUtil;
-import com.apollo.wifimanager.wifiutil.RandomUtil;
-import com.apollo.wifimanager.wifiutil.RootChecker;
-import com.apollo.wifimanager.wifiutil.WifiPsdUtil;
-import com.apollo.wifimanager.wifiutil.WifiStatus;
+import com.apollo.wifi.view.DashboardView;
+import com.apollo.wifi.view.DialogUtils;
+import com.apollo.wifi.wifiutil.DownloadUtil;
+import com.apollo.wifi.wifiutil.Manager;
+import com.apollo.wifi.wifiutil.NetworkUtil;
+import com.apollo.wifi.wifiutil.RandomUtil;
+import com.apollo.wifi.wifiutil.RootChecker;
+import com.apollo.wifi.wifiutil.WifiPsdUtil;
+import com.apollo.wifi.wifiutil.WifiStatus;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.onlineconfig.OnlineConfigAgent;
 
