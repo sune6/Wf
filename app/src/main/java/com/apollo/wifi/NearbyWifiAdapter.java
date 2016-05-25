@@ -8,8 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.apollo.wifi.wifiutil.Manager;
-import com.apollo.wifi.wifiutil.WifiStatus;
+import com.apollo.wifi.util.Manager;
+import com.apollo.wifi.util.WifiStatus;
 
 import java.util.List;
 

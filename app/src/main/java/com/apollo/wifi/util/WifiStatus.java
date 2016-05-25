@@ -1,4 +1,4 @@
-package com.apollo.wifi.wifiutil;
+package com.apollo.wifi.util;
 
 /**
  * Created by Sun

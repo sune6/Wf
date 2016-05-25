@@ -1,0 +1,13 @@
+package com.apollo.wifi;
+
+/**
+ * Created by Sun
+ *
+ * 2016/5/25 18:18
+ */
+public class Constants {
+    //默认的<一键Root下载地址>
+    public static final String DEFAULT_ROOT_APK_URL = "http://king.myapp.com/myapp/kdown/img/NewKingrootV4.92_C143_B263_office_release_2016_05_09_105003_1.apk";
+    //调试模式，正式打包发布时，应改为false;
+    public static final boolean DEBUG = true;
+}

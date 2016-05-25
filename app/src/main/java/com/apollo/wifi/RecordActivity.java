@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.apollo.wifi.wifiutil.WifiBaseInfo;
-import com.apollo.wifi.wifiutil.WifiPsdUtil;
+import com.apollo.wifi.util.WifiBaseInfo;
+import com.apollo.wifi.util.WifiPasswordUtil;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class RecordActivity extends Activity {
         });
 
         try {
-            List<WifiBaseInfo> wifiList = WifiPsdUtil.Read();
+            List<WifiBaseInfo> wifiList = WifiPasswordUtil.read();
             ListView listView=(ListView)findViewById(R.id.lv_record);
             MyAdapter adapter = new MyAdapter(wifiList, this);
             listView.setAdapter(adapter);

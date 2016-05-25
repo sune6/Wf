@@ -1,4 +1,4 @@
-package com.apollo.wifi.wifiutil;
+package com.apollo.wifi.util;
 
 import android.text.TextUtils;
 
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WifiPsdUtil {
+public class WifiPasswordUtil {
 
-    public static List<WifiBaseInfo> Read() throws Exception {
+    public static List<WifiBaseInfo> read() throws Exception {
         List<WifiBaseInfo> wifiList = new ArrayList<WifiBaseInfo>();
 
         Process process = null;

@@ -23,13 +23,15 @@ import android.widget.Toast;
 
 import com.apollo.wifi.view.DashboardView;
 import com.apollo.wifi.view.DialogUtils;
-import com.apollo.wifi.wifiutil.DownloadUtil;
-import com.apollo.wifi.wifiutil.Manager;
-import com.apollo.wifi.wifiutil.NetworkUtil;
-import com.apollo.wifi.wifiutil.RandomUtil;
-import com.apollo.wifi.wifiutil.RootChecker;
-import com.apollo.wifi.wifiutil.WifiPsdUtil;
-import com.apollo.wifi.wifiutil.WifiStatus;
+import com.apollo.wifi.util.DownloadUtil;
+import com.apollo.wifi.util.Manager;
+import com.apollo.wifi.util.NetworkUtil;
+import com.apollo.wifi.util.RandomUtil;
+import com.apollo.wifi.util.RootChecker;
+import com.apollo.wifi.util.WifiPasswordUtil;
+import com.apollo.wifi.util.WifiStatus;
+import com.iflytek.autoupdate.IFlytekUpdate;
+import com.iflytek.autoupdate.UpdateConstants;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.onlineconfig.OnlineConfigAgent;
 
@@ -37,7 +39,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     private static final String TAG = "-----";
-    private static final String apkUrl = "http://king.myapp.com/myapp/kdown/img/NewKingrootV4.92_C143_B263_office_release_2016_05_09_105003_1.apk" ;
     private TextView tvCurSSID;
     private TextView tvViewPsd;
     private ListView lvNearby;
@@ -54,14 +55,26 @@ public class MainActivity extends Activity {
         setData();
         registerWifiReceiver();
         initUmeng();
+        initXunFeiAutoUpdate();
     }
 
-    private void initUmeng(){
+    private void initUmeng() {
         //友盟统计
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
+        //调试模式
+        OnlineConfigAgent.getInstance().setDebugMode(Constants.DEBUG);
         //请求在线参数后，在线参数被缓存到本地
-        OnlineConfigAgent.getInstance().setDebugMode(true);
         OnlineConfigAgent.getInstance().updateOnlineConfig(this);
+    }
+
+    private void initXunFeiAutoUpdate() {
+        IFlytekUpdate updManager = IFlytekUpdate.getInstance(this);
+        //调试模式
+        updManager.setDebugMode(Constants.DEBUG);
+        //提示方式：通知栏模式
+        updManager.setParameter(UpdateConstants.EXTRA_STYLE, UpdateConstants.UPDATE_UI_NITIFICATION);
+        //启动自动更新，传入null更新过程交由SDK处理
+        updManager.autoUpdate(MainActivity.this, null);
     }
 
     private void registerWifiReceiver() {
@@ -78,7 +91,7 @@ public class MainActivity extends Activity {
         ivTopBarMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //点击右上角菜单图标，进入设置界面
+                //点击右上角菜单图标，
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(intent);
             }
@@ -99,6 +112,7 @@ public class MainActivity extends Activity {
 
     private void setData() {
         final Manager manager = Manager.getInstance(this);
+        Log.i(TAG, "setData: manager.isEnabled=" + manager.isEnabled());
         if (manager.isEnabled()) {
             //wifi已开
             if (NetworkUtil.isOnline(this)) {
@@ -141,7 +155,14 @@ public class MainActivity extends Activity {
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
-                            //TODO 无密码连接wifi
+                            //无密码连接wifi
+                            boolean success = connectWifi(wifi.getSsid(), "", 1);
+                            Log.i(TAG, "connectWifi: " + success);
+                            if (success) {
+                                Toast.makeText(MainActivity.this, "连接中...", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "连接失败", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                     dialog.show();
@@ -157,10 +178,13 @@ public class MainActivity extends Activity {
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
-                            boolean success = connectWifi(wifi.getSsid(), et.getText().toString());
+                            String ssid = wifi.getSsid();
+                            String psd = et.getText().toString();
+                            //根据ssid、密码、加密方式连接wifi
+                            boolean success = connectWifi(ssid, psd, 3);
                             Log.i(TAG, "connectWifi: " + success);
                             if (success) {
-                                Toast.makeText(MainActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "连接中...", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(MainActivity.this, "连接失败", Toast.LENGTH_SHORT).show();
                             }
@@ -252,7 +276,7 @@ public class MainActivity extends Activity {
                     dialog.dismiss();
 
                     String ssid = wifiConnected.getSsid();
-                    String psd = WifiPsdUtil.getPassword(ssid);
+                    String psd = WifiPasswordUtil.getPassword(ssid);
                     showPassword(ssid, psd);
                 }
             });
@@ -270,8 +294,8 @@ public class MainActivity extends Activity {
                     dialog.dismiss();
                     //用友盟在线参数工具获取已缓存到本地的数据
                     String url = OnlineConfigAgent.getInstance().getConfigParams(context, "root_apk_url");
-                    if(TextUtils.isEmpty(url)){
-                       url = apkUrl;
+                    if (TextUtils.isEmpty(url)) {
+                        url = Constants.DEFAULT_ROOT_APK_URL;
                     }
                     DownloadUtil.downloadRootApk(context, url);
                 }
@@ -308,9 +332,9 @@ public class MainActivity extends Activity {
     /**
      * 连接wifi热点
      */
-    private boolean connectWifi(String ssid, String password) {
+    private boolean connectWifi(String ssid, String password, int encryptionType) {
         Manager manager = Manager.getInstance(this);
-        WifiConfiguration conf = manager.CreateWifiInfo(ssid, password, 3);
+        WifiConfiguration conf = manager.CreateWifiInfo(ssid, password, encryptionType);
         return manager.addWifi(conf);
     }
 
@@ -337,7 +361,8 @@ public class MainActivity extends Activity {
                     setStatusConnected();
                 } else {
                     //未连接到热点
-                    setStatusNotConnected();
+                    Log.i(TAG, "onReceive: 未连接到热点");
+//                    setStatusNotConnected();
                 }
             }
 

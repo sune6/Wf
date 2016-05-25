@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.apollo.wifi.wifiutil;
+package com.apollo.wifi.util;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
@@ -51,7 +51,8 @@ public class Manager {
      * @return true 可用; false 不可用
      */
     public boolean isEnabled() {
-        return wifiManager.isWifiEnabled();
+        //return wifiManager.isWifiEnabled();//这句代码太坑，wifi开关关闭时，还返回true;
+        return wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED;
     }
 
     /**
@@ -146,9 +147,9 @@ public class Manager {
 
         //open
         if (Type == 1) {
-            config.wepKeys[0] = "";
+//            config.wepKeys[0] = "";
             config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-            config.wepTxKeyIndex = 0;
+//            config.wepTxKeyIndex = 0;
         }
         //WIFICIPHER_WEP
         if (Type == 2) {
@@ -180,9 +181,11 @@ public class Manager {
 
     private WifiConfiguration exists(String SSID) {
         List<WifiConfiguration> existingConfigs = wifiManager.getConfiguredNetworks();
-        for (WifiConfiguration existingConfig : existingConfigs) {
-            if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
-                return existingConfig;
+        if(existingConfigs != null){
+            for (WifiConfiguration existingConfig : existingConfigs) {
+                if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
+                    return existingConfig;
+                }
             }
         }
         return null;

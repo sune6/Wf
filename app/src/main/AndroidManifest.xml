@@ -65,6 +65,12 @@
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${CHANNEL_NAME}" />
+
+        <!-- =============================== 讯飞自动更新SDK =============================== -->
+        <activity android:name ="com.iflytek.autoupdate.IFlytekUpdateDialog"/>
+        <service android:name="com.iflytek.autoupdate.IFlytekDownloadService"/>
+        <meta-data android:name="IFLYTEK_APPKEY" android:value="'574574d2'"/>
+
     </application>
 
 </manifest>
