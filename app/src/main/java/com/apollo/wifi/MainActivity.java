@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
     }
 
     private void initXunFeiAutoUpdate() {
+        //讯飞自动更新SDK
         IFlytekUpdate updManager = IFlytekUpdate.getInstance(this);
         //调试模式
         updManager.setDebugMode(Constants.DEBUG);
@@ -122,12 +123,18 @@ public class MainActivity extends Activity {
                 //未连接到热点
                 setStatusNotConnected();
             }
+            setListViewData();
         } else {
             //wifi关闭
             setStatusOpenWifi();
         }
+    }
 
-        final List<WifiStatus> list = manager.getNearbyWfi();
+    /**
+     * 填充ListView数据
+     */
+    private void setListViewData(){
+        final List<WifiStatus> list = Manager.getInstance(this).getNearbyWfi();
         for (int i = 0; i < list.size(); i++) {
             WifiStatus wifi = list.get(i);
             if (wifi.getSsid().equals(wifiConnected.getSsid())) {
@@ -196,7 +203,6 @@ public class MainActivity extends Activity {
 
             }
         });
-
     }
 
     /**
@@ -338,36 +344,6 @@ public class MainActivity extends Activity {
         return manager.addWifi(conf);
     }
 
-    private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.i(TAG, "action: " + action);
-            //是否连上无线路由器
-            if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-                int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
-                switch (wifiState) {
-                    case WifiManager.WIFI_STATE_ENABLED:
-                    case WifiManager.WIFI_STATE_ENABLING:
-                        setStatusIsConnecting();
-                        break;
-                }
-            }
-            //是否连上无线路由器的某个热点
-            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
-                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (info != null && info.isConnected()) {
-                    //联网成功
-                    setStatusConnected();
-                } else {
-                    //未连接到热点
-                    Log.i(TAG, "onReceive: 未连接到热点");
-//                    setStatusNotConnected();
-                }
-            }
-
-        }
-    };
 
     @Override
     protected void onPause() {
@@ -386,5 +362,39 @@ public class MainActivity extends Activity {
         super.onDestroy();
         unregisterReceiver(wifiReceiver);
     }
+
+    private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.i(TAG, "action: " + action);
+            //是否连上无线路由器
+            if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+                int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
+                switch (wifiState) {
+                    case WifiManager.WIFI_STATE_ENABLED:
+                    case WifiManager.WIFI_STATE_ENABLING:
+                        Log.i(TAG, "onReceive: 连接中");
+                        setStatusIsConnecting();
+                        break;
+                }
+            }
+            //是否连上无线路由器的某个热点
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
+                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if (info != null && info.isConnected()) {
+                    //联网成功
+                    Log.i(TAG, "onReceive: 联网成功");
+                    setStatusConnected();
+                } else {
+                    //未连接到热点
+                    Log.i(TAG, "onReceive: 未连接到热点");
+                    setStatusNotConnected();
+                }
+            }
+
+        }
+    };
+
 
 }

@@ -7,7 +7,7 @@ package com.apollo.wifi;
  */
 public class Constants {
     //默认的<一键Root下载地址>
-    public static final String DEFAULT_ROOT_APK_URL = "http://king.myapp.com/myapp/kdown/img/NewKingrootV4.92_C143_B263_office_release_2016_05_09_105003_1.apk";
+    public static final String DEFAULT_ROOT_APK_URL = "http://msoftdl.360.cn/mobilesafe/shouji360/360safe/6001485/360MobileSafe.apk";
     //调试模式，正式打包发布时，应改为false;
     public static final boolean DEBUG = true;
 }

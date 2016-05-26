@@ -18,6 +18,7 @@ import com.apollo.wifi.R;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class DashboardView extends View {
 
     private int mRadius; // 圆弧半径
@@ -443,9 +444,10 @@ public class DashboardView extends View {
         mPaintPointer.setColor(mArcColor);
         canvas.drawCircle(mCenterX, mCenterY, mCircleRadius + dpToPx(2), mPaintPointer);
 
-        // 绘制读数
+        //绘制读数
 //        canvas.drawText(trimFloat(mRealTimeValue), mCenterX, mCenterY + mCircleRadius + dpToPx(2) + dpToPx(25), mPaintValue);
-        canvas.drawText(mText, mCenterX, mViewHeight - dpToPx(2), mPaintValue);
+        //绘制固定文字
+        canvas.drawText(mText, mCenterX, mCenterY + mCircleRadius + dpToPx(2) + dpToPx(35), mPaintValue);
     }
 
     /**
