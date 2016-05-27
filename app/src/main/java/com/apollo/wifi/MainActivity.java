@@ -11,7 +11,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,15 +20,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apollo.wifi.view.DashboardView;
-import com.apollo.wifi.view.DialogUtils;
 import com.apollo.wifi.util.DownloadUtil;
+import com.apollo.wifi.util.LogUtil;
 import com.apollo.wifi.util.Manager;
 import com.apollo.wifi.util.NetworkUtil;
 import com.apollo.wifi.util.RandomUtil;
 import com.apollo.wifi.util.RootChecker;
 import com.apollo.wifi.util.WifiPasswordUtil;
 import com.apollo.wifi.util.WifiStatus;
+import com.apollo.wifi.view.DashboardView;
+import com.apollo.wifi.view.DialogUtils;
 import com.iflytek.autoupdate.IFlytekUpdate;
 import com.iflytek.autoupdate.UpdateConstants;
 import com.umeng.analytics.MobclickAgent;
@@ -39,12 +39,25 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     private static final String TAG = "-----";
+
+    /** 当前已连接的wifi 或者 未连接时的提示 */
     private TextView tvCurSSID;
+
+    /** 一键查看密码 */
     private TextView tvViewPsd;
-    private ListView lvNearby;
+
+    /** 仪表盘-信号 */
     private DashboardView dvSignal;
+
+    /** 仪表盘-网速 */
     private DashboardView dvSpeed;
-    private WifiStatus wifiConnected = new WifiStatus(); //当前连接的wifi信息
+
+    /** 附近的wifi列表 */
+    private ListView lvNearby;
+
+    /** 当前连接的wifi信息 */
+    private WifiStatus wifiConnected = new WifiStatus();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +126,7 @@ public class MainActivity extends Activity {
 
     private void setData() {
         final Manager manager = Manager.getInstance(this);
-        Log.i(TAG, "setData: manager.isEnabled=" + manager.isEnabled());
+        LogUtil.i(TAG, "setData: manager.isEnabled=" + manager.isEnabled());
         if (manager.isEnabled()) {
             //wifi已开
             if (NetworkUtil.isOnline(this)) {
@@ -164,7 +177,7 @@ public class MainActivity extends Activity {
                             dialog.dismiss();
                             //无密码连接wifi
                             boolean success = connectWifi(wifi.getSsid(), "", 1);
-                            Log.i(TAG, "connectWifi: " + success);
+                            LogUtil.i(TAG, "connectWifi: " + success);
                             if (success) {
                                 Toast.makeText(MainActivity.this, "连接中...", Toast.LENGTH_SHORT).show();
                             } else {
@@ -189,7 +202,7 @@ public class MainActivity extends Activity {
                             String psd = et.getText().toString();
                             //根据ssid、密码、加密方式连接wifi
                             boolean success = connectWifi(ssid, psd, 3);
-                            Log.i(TAG, "connectWifi: " + success);
+                            LogUtil.i(TAG, "connectWifi: " + success);
                             if (success) {
                                 Toast.makeText(MainActivity.this, "连接中...", Toast.LENGTH_SHORT).show();
                             } else {
@@ -220,17 +233,18 @@ public class MainActivity extends Activity {
             }
         });
 
-        tvViewPsd.setClickable(false);
+        tvViewPsd.setVisibility(View.INVISIBLE);
     }
 
     /**
-     * 未连接热点
+     * 未连接热点(wifi开关已打开)
      */
     private void setStatusNotConnected() {
         tvCurSSID.setText("未连接热点");
         tvCurSSID.setClickable(false);
 
-        tvViewPsd.setClickable(false);
+        tvViewPsd.setVisibility(View.INVISIBLE);
+        setListViewData();
     }
 
     /**
@@ -240,7 +254,7 @@ public class MainActivity extends Activity {
         tvCurSSID.setText("连接中...");
         tvCurSSID.setClickable(false);
 
-        tvViewPsd.setClickable(false);
+        tvViewPsd.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -252,7 +266,7 @@ public class MainActivity extends Activity {
         //连接成功后，显示wifi热点名称，并设为不可点击
         tvCurSSID.setClickable(false);
 
-        tvViewPsd.setClickable(true);
+        tvViewPsd.setVisibility(View.VISIBLE);
 
         int signal = wifiConnected.getLevel();
         dvSignal.setRealTimeValue(signal, true, 150);
@@ -367,14 +381,16 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i(TAG, "action: " + action);
+            LogUtil.i(TAG, "action: " + action);
             //是否连上无线路由器
             if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
                 int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
                 switch (wifiState) {
                     case WifiManager.WIFI_STATE_ENABLED:
+                        LogUtil.i(TAG, "onReceive: ENABLED");
+                        break;
                     case WifiManager.WIFI_STATE_ENABLING:
-                        Log.i(TAG, "onReceive: 连接中");
+                        LogUtil.i(TAG, "onReceive: 连接中");
                         setStatusIsConnecting();
                         break;
                 }
@@ -384,12 +400,14 @@ public class MainActivity extends Activity {
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (info != null && info.isConnected()) {
                     //联网成功
-                    Log.i(TAG, "onReceive: 联网成功");
+                    LogUtil.i(TAG, "onReceive: 联网成功");
                     setStatusConnected();
                 } else {
-                    //未连接到热点
-                    Log.i(TAG, "onReceive: 未连接到热点");
-                    setStatusNotConnected();
+                    if(Manager.getInstance(context).isEnabled()){
+                        //未连接到热点
+                        LogUtil.i(TAG, "onReceive: 未连接到热点");
+                        setStatusNotConnected();
+                    }
                 }
             }
 

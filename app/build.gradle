@@ -16,6 +16,18 @@ android {
     productFlavors {
         official {
         }
+        qihoo360 {
+        }
+        baidu {
+        }
+        yingyongbao {
+        }
+        mumayi {
+        }
+        pp {
+        }
+        sougou {
+        }
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [CHANNEL_NAME: name]
         }
@@ -26,7 +38,7 @@ android {
         variant.outputs.each { output ->
             output.outputFile = new File(
                     output.outputFile.parent,
-                    "WifiManager-${variant.buildType.name}-${variant.productFlavors[0].name}.apk".toLowerCase())
+                    "Wifi-${variant.buildType.name}-${variant.productFlavors[0].name}.apk".toLowerCase())
         }
     }
 

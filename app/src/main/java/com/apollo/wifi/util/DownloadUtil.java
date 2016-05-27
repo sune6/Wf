@@ -16,9 +16,10 @@ public class DownloadUtil {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setMimeType("application/vnd.android.package-archive");
-        request.setDestinationInExternalPublicDir("WiFiManager", "root.apk");
+        String fileName = url.hashCode() + ".apk";
+        request.setDestinationInExternalPublicDir("WiFiManager", fileName);
 // request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
 // request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-        long downloadId = downloadManager.enqueue(request);
+        downloadManager.enqueue(request);
     }
 }

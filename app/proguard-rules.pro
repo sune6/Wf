@@ -19,7 +19,11 @@
 #友盟
 -keep class com.umeng.**{*;}
 
+#科大讯飞自动更新SDK
+-keep class com.iflytek.**{*;}
+
 #友盟要求
 -keepclassmembers class * {
-        public (org.json.JSONObject);
+   public <init> (org.json.JSONObject);
 }
+

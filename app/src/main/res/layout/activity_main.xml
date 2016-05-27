@@ -103,7 +103,7 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:gravity="center_vertical"
-        android:text="附近的Wifi"
+        android:text="附近的WiFi"
         android:textColor="#9E9E9E"
         android:textSize="16sp" />
 
