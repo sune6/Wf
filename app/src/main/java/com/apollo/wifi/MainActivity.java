@@ -2,6 +2,7 @@ package com.apollo.wifi;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,9 @@ import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,22 +43,34 @@ import java.util.List;
 public class MainActivity extends Activity {
     private static final String TAG = "-----";
 
-    /** 当前已连接的wifi 或者 未连接时的提示 */
+    /**
+     * 当前已连接的wifi 或者 未连接时的提示
+     */
     private TextView tvCurSSID;
 
-    /** 一键查看密码 */
+    /**
+     * 一键查看密码
+     */
     private TextView tvViewPsd;
 
-    /** 仪表盘-信号 */
+    /**
+     * 仪表盘-信号
+     */
     private DashboardView dvSignal;
 
-    /** 仪表盘-网速 */
+    /**
+     * 仪表盘-网速
+     */
     private DashboardView dvSpeed;
 
-    /** 附近的wifi列表 */
+    /**
+     * 附近的wifi列表
+     */
     private ListView lvNearby;
 
-    /** 当前连接的wifi信息 */
+    /**
+     * 当前连接的wifi信息
+     */
     private WifiStatus wifiConnected = new WifiStatus();
 
 
@@ -69,6 +84,7 @@ public class MainActivity extends Activity {
         registerWifiReceiver();
         initUmeng();
         initXunFeiAutoUpdate();
+
     }
 
     private void initUmeng() {
@@ -146,7 +162,7 @@ public class MainActivity extends Activity {
     /**
      * 填充ListView数据
      */
-    private void setListViewData(){
+    private void setListViewData() {
         final List<WifiStatus> list = Manager.getInstance(this).getNearbyWfi();
         for (int i = 0; i < list.size(); i++) {
             WifiStatus wifi = list.get(i);
@@ -296,8 +312,10 @@ public class MainActivity extends Activity {
                     dialog.dismiss();
 
                     String ssid = wifiConnected.getSsid();
-                    String psd = WifiPasswordUtil.getPassword(ssid);
-                    showPassword(ssid, psd);
+                    new GetPasswordTask().execute(ssid);
+
+//                    String psd = WifiPasswordUtil.getPassword(ssid);
+//                    showPassword(ssid, psd);
                 }
             });
             dialog.show();
@@ -377,6 +395,47 @@ public class MainActivity extends Activity {
         unregisterReceiver(wifiReceiver);
     }
 
+    /**
+     * 异步任务，读取Wifi密码
+     */
+    private class GetPasswordTask extends AsyncTask<String, Void, String>{
+        private ProgressDialog pd;
+        private String ssid;
+        private Handler handler = new Handler();
+        private boolean completed = false;
+
+        @Override
+        protected void onPreExecute() {
+            pd = new ProgressDialog(MainActivity.this);
+//            pd.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
+            pd.setMessage("正在获取...");
+            //延迟0.5秒显示，防止获取速度很快时，进度条对话框一闪而过的情况
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(!completed && pd != null && !pd.isShowing()){
+                        pd.show();
+                    }
+                }
+            }, 500);
+        }
+
+        @Override
+        protected String doInBackground(String... str) {
+            ssid = str[0];
+            return WifiPasswordUtil.getPassword(ssid);
+        }
+
+        @Override
+        protected void onPostExecute(String pswd) {
+            completed = true;
+            if(pd != null && pd.isShowing()){
+                pd.dismiss();
+            }
+            showPassword(ssid, pswd);
+        }
+    }
+
     private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -403,7 +462,7 @@ public class MainActivity extends Activity {
                     LogUtil.i(TAG, "onReceive: 联网成功");
                     setStatusConnected();
                 } else {
-                    if(Manager.getInstance(context).isEnabled()){
+                    if (Manager.getInstance(context).isEnabled()) {
                         //未连接到热点
                         LogUtil.i(TAG, "onReceive: 未连接到热点");
                         setStatusNotConnected();

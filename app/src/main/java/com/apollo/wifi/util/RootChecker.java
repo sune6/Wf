@@ -47,4 +47,5 @@ public final class RootChecker {
         }
         return false;
     }
+
 }
