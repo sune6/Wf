@@ -8,8 +8,8 @@ android {
         applicationId "com.apollo.wifi"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
 
     //多渠道打包设置
@@ -22,9 +22,7 @@ android {
         }
         yingyongbao {
         }
-        mumayi {
-        }
-        pp {
+        anzhi {
         }
         sougou {
         }
